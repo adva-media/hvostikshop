@@ -1,0 +1,24 @@
+.DS_Store
+Thumbs.db
+
+# Python / local tooling
+__pycache__/
+*.py[cod]
+*.pyc
+.env
+.env.*
+node_modules/
+
+# Dev-only generators (HTML already built)
+build_html.py
+images/gen_bags.py
+
+# Screenshot / scratch output
+images/_shots/
+
+# Source/reference assets at repo root (site uses images/)
+/*.png
+/*.jpeg
+/*.jpg
+/ChatGPT*
+/IMG_*
