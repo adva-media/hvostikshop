@@ -37,7 +37,8 @@ img {
   width: 14px;
   height: 14px;
   vertical-align: -2px;
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><ellipse cx='7' cy='8' rx='2.4' ry='3.1' fill='%2376933C'/><ellipse cx='17' cy='8' rx='2.4' ry='3.1' fill='%2376933C'/><ellipse cx='4.2' cy='14' rx='2' ry='2.5' fill='%2376933C'/><ellipse cx='19.8' cy='14' rx='2' ry='2.5' fill='%2376933C'/><ellipse cx='12' cy='15.2' rx='4.6' ry='4.2' fill='%2376933C'/></svg>") center / contain no-repeat;
+  background: url("../images/paw-bg.png") center / contain no-repeat;
+  opacity: 0.85;
 }
 
 /* ---------- top bar ---------- */
@@ -101,7 +102,8 @@ img {
   width: 13px;
   height: 13px;
   margin-left: -6px;
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><ellipse cx='7' cy='8' rx='2.4' ry='3.1' fill='%2376933C'/><ellipse cx='17' cy='8' rx='2.4' ry='3.1' fill='%2376933C'/><ellipse cx='4.2' cy='14' rx='2' ry='2.5' fill='%2376933C'/><ellipse cx='19.8' cy='14' rx='2' ry='2.5' fill='%2376933C'/><ellipse cx='12' cy='15.2' rx='4.6' ry='4.2' fill='%2376933C'/></svg>") center / contain no-repeat;
+  background: url("../images/paw-bg.png") center / contain no-repeat;
+  opacity: 0.8;
 }
 .logo-tag {
   display: block;
@@ -277,7 +279,8 @@ img {
   background: #658032;
 }
 .btn .paw {
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><ellipse cx='7' cy='8' rx='2.4' ry='3.1' fill='%23fff'/><ellipse cx='17' cy='8' rx='2.4' ry='3.1' fill='%23fff'/><ellipse cx='4.2' cy='14' rx='2' ry='2.5' fill='%23fff'/><ellipse cx='19.8' cy='14' rx='2' ry='2.5' fill='%23fff'/><ellipse cx='12' cy='15.2' rx='4.6' ry='4.2' fill='%23fff'/></svg>");
+  background-image: url("../images/paw-bg.png");
+  filter: brightness(0) invert(1);
   margin-right: 6px;
 }
 .btn-ghost {
@@ -336,7 +339,8 @@ img {
   top: 7px;
   width: 14px;
   height: 14px;
-  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><ellipse cx='7' cy='8' rx='2.4' ry='3.1' fill='%2376933C'/><ellipse cx='17' cy='8' rx='2.4' ry='3.1' fill='%2376933C'/><ellipse cx='4.2' cy='14' rx='2' ry='2.5' fill='%2376933C'/><ellipse cx='19.8' cy='14' rx='2' ry='2.5' fill='%2376933C'/><ellipse cx='12' cy='15.2' rx='4.6' ry='4.2' fill='%2376933C'/></svg>") center / contain no-repeat;
+  background: url("../images/paw-bg.png") center / contain no-repeat;
+  opacity: 0.8;
 }
 .hero-actions {
   display: flex;
@@ -350,21 +354,14 @@ img {
 }
 .hero-photo img.hero-main {
   width: 100%;
-  height: 340px;
+  height: 360px;
   object-fit: cover;
+  object-position: center;
   border-radius: 10px;
   box-shadow: 0 4px 16px rgba(80, 70, 40, 0.12);
 }
 .hero-bowl {
-  position: absolute;
-  left: 18px;
-  bottom: 18px;
-  width: 120px;
-  height: 90px;
-  object-fit: cover;
-  border-radius: 50%;
-  border: 6px solid #fff;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  display: none;
 }
 .stamp {
   position: absolute;
@@ -451,6 +448,18 @@ img {
 /* ---------- catalog home ---------- */
 .section {
   padding: 28px 0;
+  position: relative;
+}
+.section:after {
+  content: "";
+  position: absolute;
+  right: 20px;
+  bottom: 12px;
+  width: 40px;
+  height: 40px;
+  background: url("../images/paw-bg.png") center / contain no-repeat;
+  opacity: 0.09;
+  pointer-events: none;
 }
 .section-head {
   display: flex;
@@ -597,8 +606,9 @@ img {
   box-shadow: 0 2px 8px rgba(80, 70, 40, 0.06);
 }
 .toy-card img {
-  height: 70px;
+  height: 110px;
   width: auto;
+  object-fit: contain;
 }
 .toy-card h3 {
   margin: 8px 0 4px;
@@ -609,48 +619,6 @@ img {
   margin-bottom: 8px;
 }
 
-/* ---------- newsletter ---------- */
-.newsbar {
-  background: #eee9d8;
-  padding: 18px 0;
-}
-.newsbar .wrap {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.newsbar .n-ico {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: #76933c;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-.newsbar .n-ico svg {
-  width: 20px;
-  height: 20px;
-  fill: #fff;
-}
-.newsbar p {
-  margin: 0;
-  font-weight: 700;
-  color: #3a3a3a;
-  flex: 1;
-}
-.news-form {
-  display: flex;
-  gap: 8px;
-}
-.news-form input {
-  width: 240px;
-  border: 1px solid #ddd6be;
-  border-radius: 5px;
-  padding: 9px 12px;
-  font: 14px Nunito, sans-serif;
-}
 .form-ok {
   display: none;
   color: #5a7a30;
@@ -695,27 +663,6 @@ img {
 .footer-brand .logo-name {
   font-size: 22px;
 }
-.soc {
-  margin-top: 12px;
-  display: flex;
-  gap: 8px;
-}
-.soc a {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #76933c;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  font-weight: 800;
-  text-decoration: none !important;
-}
-.soc a:hover {
-  background: #658032;
-}
 .footer-copy {
   margin-top: 22px;
   padding-top: 12px;
@@ -733,6 +680,18 @@ img {
 /* ---------- inner pages ---------- */
 .page-head {
   padding: 22px 0 8px;
+  position: relative;
+}
+.page-head:after {
+  content: "";
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  width: 44px;
+  height: 44px;
+  background: url("../images/paw-bg.png") center / contain no-repeat;
+  opacity: 0.12;
+  pointer-events: none;
 }
 .crumbs {
   font-size: 12px;
@@ -1018,10 +977,37 @@ img {
   border-radius: 8px;
   padding: 16px;
   margin-top: 20px;
+  position: relative;
+}
+.help-box:after {
+  content: "";
+  position: absolute;
+  right: 12px;
+  top: 10px;
+  width: 26px;
+  height: 26px;
+  background: url("../images/paw-bg.png") center / contain no-repeat;
+  opacity: 0.12;
+  pointer-events: none;
 }
 .help-box h3 {
   margin: 0 0 8px;
   color: #6f8738;
+}
+
+.footer {
+  position: relative;
+}
+.footer:before {
+  content: "";
+  position: absolute;
+  left: 18px;
+  top: 14px;
+  width: 54px;
+  height: 54px;
+  background: url("../images/paw-bg.png") center / contain no-repeat;
+  opacity: 0.1;
+  pointer-events: none;
 }
 
 /* cart */
@@ -1137,7 +1123,6 @@ img {
   .hero-grid,
   .features,
   .catalog-layout,
-  .newsbar .wrap,
   .footer-grid,
   .two-cols,
   .p-layout,
@@ -1187,12 +1172,6 @@ img {
   .search {
     width: 100%;
     margin: 8px 0;
-  }
-  .news-form {
-    flex-wrap: wrap;
-  }
-  .news-form input {
-    width: 100%;
   }
   .blog-list .post img {
     width: 100%;
