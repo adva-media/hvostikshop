@@ -78,36 +78,35 @@
   </div>
   <div class="wrap section" style="padding-top:0">
     <div id="cart-root"></div>
-    <h2 id="checkout">Оформление заказа</h2>
-    <p class="muted">Заполните форму — мы свяжемся, подтвердим наличие и согласуем отправку. Оплаты на сайте нет, всё по телефону или переводу.</p>
-    <div id="checkout-done" class="form-ok">Спасибо! Заказ принят. Напишем или позвоним в рабочие часы (с 9:00 до 18:00 (МСК)).</div>
-    <form class="form" id="checkout-form">
-      <label>Имя</label>
-      <input type="text" name="name" required>
-      <label>Телефон</label>
-      <input type="tel" name="phone" required placeholder="+7 ...">
-      <label>E-mail</label>
-      <input type="email" name="email" required>
-      <label>Город (куда отправлять)</label>
-      <input type="text" name="city" required>
-      <label>Способ доставки</label>
-      <select name="ship">
-        <option>СДЭК</option>
-        <option>Почта России</option>
-        <option>5POST</option>
-        <option>Boxberry</option>
-        <option>DPD</option>
-      </select>
-      <label>Оплата</label>
-      <select name="pay">
-        <option>Наложенный платёж</option>
-        <option>Карта</option>
-        <option>Перевод</option>
-      </select>
-      <label>Комментарий</label>
-      <textarea name="comment" placeholder="Вкусы, пожелания по ТК..."></textarea>
-      <button class="btn" type="submit">Отправить заказ</button>
-    </form>
+    <div id="checkout-block">
+      <h2 id="checkout">Оформление заказа</h2>
+      <p class="muted">Оплаты на сайте нет. Оставьте заявку — мы подтвердим заказ и согласуем оплату по телефону или переводу. После отправки формы позвоните по <a href="tel:+79685459982">+7 968 545 99 82</a> или напишите на <a href="mailto:hvostik.shop@mail.ru">hvostik.shop@mail.ru</a>, указав номер заказа.</p>
+      <div id="checkout-done" class="checkout-done" hidden></div>
+      <form class="form" id="checkout-form">
+        <label>Имя <span class="req">*</span></label>
+        <input type="text" name="name" required autocomplete="name">
+        <label>Телефон</label>
+        <input type="tel" name="phone" placeholder="+7 ..." autocomplete="tel">
+        <label>E-mail</label>
+        <input type="email" name="email" placeholder="you@mail.ru" autocomplete="email">
+        <p class="form-hint" id="contact-hint">Укажите телефон или e-mail (хотя бы одно).</p>
+        <label>Город (куда отправлять)</label>
+        <input type="text" name="city" autocomplete="address-level2">
+        <label>Способ доставки</label>
+        <select name="ship">
+          <option>СДЭК</option>
+          <option>Почта России</option>
+          <option>5POST</option>
+          <option>Boxberry</option>
+          <option>DPD</option>
+          <option>Уточню позже</option>
+        </select>
+        <label>Сообщение / комментарий</label>
+        <textarea name="comment" placeholder="Вкусы, пожелания по доставке, вопрос по заказу..."></textarea>
+        <button class="btn" type="submit" id="checkout-submit">Отправить заказ</button>
+        <p class="form-hint muted">Нажимая кнопку, вы отправляете заявку в магазин. Оплатить на сайте нельзя — только по договорённости.</p>
+      </form>
+    </div>
   </div>
   <footer class="footer">
     <div class="wrap">

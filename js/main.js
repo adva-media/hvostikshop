@@ -146,15 +146,148 @@
     }
   }
 
+  function generateOrderNumber() {
+    var n = Math.floor(100000 + Math.random() * 900000);
+    return 'ХВ-' + String(n);
+  }
+
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function showCheckoutSuccess(order, mailed) {
+    var form = document.getElementById('checkout-form');
+    var done = document.getElementById('checkout-done');
+    var block = document.getElementById('checkout-block');
+    if (form) form.style.display = 'none';
+    if (block) {
+      var muted = block.querySelector('p.muted');
+      if (muted) muted.style.display = 'none';
+      var h2 = block.querySelector('h2');
+      if (h2) h2.textContent = 'Заказ принят';
+    }
+    if (done) {
+      var mailNote = mailed
+        ? '<p class="checkout-mail-note">Заявка отправлена в магазин. Мы ответим в рабочие часы (с 9:00 до 18:00 МСК).</p>'
+        : '<p class="checkout-mail-note">Заявка сохранена. Если письмо не ушло автоматически — просто напишите нам на почту с этим номером заказа.</p>';
+      done.innerHTML =
+        '<p><strong>Спасибо! Ваш номер заказа:</strong></p>' +
+        '<div class="order-no">' +
+        escapeHtml(order) +
+        '</div>' +
+        '<p>Оплаты на сайте нет. Чтобы завершить заказ, позвоните по телефону ' +
+        '<a href="tel:+79685459982">+7 968 545 99 82</a> ' +
+        'или напишите на ' +
+        '<a href="mailto:hvostik.shop@mail.ru?subject=' +
+        encodeURIComponent('Заказ ' + order) +
+        '">hvostik.shop@mail.ru</a> ' +
+        'и укажите номер заказа <strong>' +
+        escapeHtml(order) +
+        '</strong>.</p>' +
+        mailNote;
+      done.hidden = false;
+      done.removeAttribute('hidden');
+    }
+  }
+
+  function setCheckoutBusy(busy) {
+    var btn = document.getElementById('checkout-submit');
+    if (!btn) return;
+    btn.disabled = !!busy;
+    btn.textContent = busy ? 'Отправляем…' : 'Отправить заказ';
+  }
+
+  function postOrder(payload, onDone) {
+    var finished = false;
+    function finish(result) {
+      if (finished) return;
+      finished = true;
+      onDone(result);
+    }
+
+    try {
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'order.php', true);
+      xhr.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
+      xhr.setRequestHeader('Accept', 'application/json');
+      xhr.timeout = 12000;
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState !== 4) return;
+        var data = null;
+        try {
+          data = JSON.parse(xhr.responseText || '{}');
+        } catch (err) {
+          data = null;
+        }
+        if (xhr.status >= 200 && xhr.status < 300 && data && data.ok) {
+          finish({ ok: true, mailed: !!data.mailed, order: data.order || payload.order });
+          return;
+        }
+        // Local file://, python -m http.server, or static host without PHP
+        if (
+          xhr.status === 0 ||
+          xhr.status === 404 ||
+          xhr.status === 405 ||
+          xhr.status === 501 ||
+          !data ||
+          typeof data.ok === 'undefined'
+        ) {
+          if (typeof console !== 'undefined' && console.log) {
+            console.log('[hvostik] order.php unavailable — local fallback', payload);
+          }
+          finish({ ok: true, mailed: false, local: true, order: payload.order });
+          return;
+        }
+        finish({
+          ok: false,
+          mailed: false,
+          order: payload.order,
+          error: (data && data.error) || 'server_error'
+        });
+      };
+      xhr.ontimeout = function () {
+        finish({ ok: true, mailed: false, local: true, order: payload.order });
+      };
+      xhr.onerror = function () {
+        if (typeof console !== 'undefined' && console.log) {
+          console.log('[hvostik] order.php network error — local fallback', payload);
+        }
+        finish({ ok: true, mailed: false, local: true, order: payload.order });
+      };
+      xhr.send(JSON.stringify(payload));
+    } catch (e) {
+      if (typeof console !== 'undefined' && console.log) {
+        console.log('[hvostik] order post failed — local fallback', payload, e);
+      }
+      finish({ ok: true, mailed: false, local: true, order: payload.order });
+    }
+  }
+
   function renderCartPage() {
     var box = document.getElementById('cart-root');
     if (!box) return;
+    var checkoutBlock = document.getElementById('checkout-block');
+    var form = document.getElementById('checkout-form');
+    var done = document.getElementById('checkout-done');
+    var orderDone = done && !done.hidden && done.innerHTML;
     var items = loadCart();
+
     if (!items.length) {
       box.innerHTML =
         '<div class="cart-empty"><p>В корзине пока пусто.</p><p><a class="btn" href="catalog.html">Перейти в каталог</a></p></div>';
+      if (checkoutBlock && !orderDone) {
+        checkoutBlock.style.display = 'none';
+      }
       return;
     }
+
+    if (checkoutBlock && !orderDone) checkoutBlock.style.display = '';
+    if (form && !orderDone) form.style.display = '';
+
     var rows = '';
     items.forEach(function (it, idx) {
       rows +=
@@ -165,7 +298,7 @@
           : '') +
         '</td>' +
         '<td>' +
-        it.name +
+        escapeHtml(it.name) +
         '</td>' +
         '<td>' +
         formatMoney(it.price) +
@@ -219,19 +352,88 @@
   function bindCheckout() {
     var form = document.getElementById('checkout-form');
     if (!form) return;
+    var hint = document.getElementById('contact-hint');
+
     form.onsubmit = function (e) {
       e.preventDefault();
-      if (!loadCart().length) {
+      var items = loadCart();
+      if (!items.length) {
         toast('Корзина пуста');
         return;
       }
-      localStorage.removeItem(STORAGE);
-      updateCartWidgets();
-      renderCartPage();
-      var done = document.getElementById('checkout-done');
-      if (done) done.className = 'form-ok is-show';
-      form.style.display = 'none';
-      toast('Заказ принят. Спасибо!');
+
+      var name = (form.elements.namedItem('name') && form.elements.namedItem('name').value || '').trim();
+      var phone = (form.elements.namedItem('phone') && form.elements.namedItem('phone').value || '').trim();
+      var email = (form.elements.namedItem('email') && form.elements.namedItem('email').value || '').trim();
+      var city = (form.elements.namedItem('city') && form.elements.namedItem('city').value || '').trim();
+      var shipEl = form.elements.namedItem('ship');
+      var ship = (shipEl && shipEl.value || '').trim();
+      var comment = (form.elements.namedItem('comment') && form.elements.namedItem('comment').value || '').trim();
+
+      if (!name) {
+        toast('Укажите имя');
+        var nameEl = form.elements.namedItem('name');
+        if (nameEl && nameEl.focus) nameEl.focus();
+        return;
+      }
+      if (!phone && !email) {
+        if (hint) {
+          hint.className = 'form-hint is-error';
+          hint.textContent = 'Укажите телефон или e-mail (хотя бы одно).';
+        }
+        toast('Нужен телефон или e-mail');
+        var phoneEl = form.elements.namedItem('phone');
+        if (phoneEl && phoneEl.focus) phoneEl.focus();
+        return;
+      }
+      if (hint) {
+        hint.className = 'form-hint';
+        hint.textContent = 'Укажите телефон или e-mail (хотя бы одно).';
+      }
+
+      var totals = cartTotals(items);
+      var order = generateOrderNumber();
+      var payload = {
+        order: order,
+        name: name,
+        phone: phone,
+        email: email,
+        city: city,
+        ship: ship,
+        comment: comment,
+        items: items.map(function (it) {
+          return {
+            id: it.id,
+            name: it.name,
+            qty: it.qty,
+            price: it.price
+          };
+        }),
+        total: totals.sum
+      };
+
+      setCheckoutBusy(true);
+      postOrder(payload, function (result) {
+        setCheckoutBusy(false);
+        if (!result.ok && result.error === 'mail_failed') {
+          // Still show success with order number — shop can be contacted manually
+          localStorage.removeItem(STORAGE);
+          updateCartWidgets();
+          renderCartPage();
+          showCheckoutSuccess(order, false);
+          toast('Заказ принят. Напишите нам с номером ' + order);
+          return;
+        }
+        if (!result.ok) {
+          toast('Не удалось отправить. Позвоните +7 968 545 99 82');
+          return;
+        }
+        localStorage.removeItem(STORAGE);
+        updateCartWidgets();
+        renderCartPage();
+        showCheckoutSuccess(order, !!result.mailed);
+        toast('Заказ ' + order + ' принят');
+      });
     };
   }
 

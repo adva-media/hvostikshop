@@ -22,3 +22,8 @@ images/_shots/
 /*.jpg
 /ChatGPT*
 /IMG_*
+
+# Runtime mail log on hosting
+order-mail.log
+
+hvostikshop-deploy.zip
