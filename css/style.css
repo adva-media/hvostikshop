@@ -88,20 +88,14 @@ img {
   font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 1.1;
-  position: relative;
-  padding-top: 10px;
 }
-.logo-name .o {
-  position: relative;
-}
-.logo-name .o:after {
+.logo-name:after {
   content: "";
-  position: absolute;
-  left: 50%;
-  top: -11px;
+  display: inline-block;
   width: 13px;
   height: 13px;
-  margin-left: -6px;
+  margin-left: 6px;
+  vertical-align: middle;
   background: url("../images/paw-bg.png") center / contain no-repeat;
   opacity: 0.8;
 }
@@ -299,28 +293,63 @@ img {
 
 /* ---------- hero ---------- */
 .hero {
-  padding: 28px 0 18px;
+  padding: 0 0 18px;
 }
-.hero-grid {
+.hero-banner {
+  position: relative;
+  overflow: hidden;
+  min-height: 520px;
+  background: #f3ead8;
+}
+.hero-banner-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  /* Pin to upper third so pet heads stay visible */
+  object-position: 70% 18%;
+  display: block;
+}
+.hero-banner-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(252, 250, 240, 0.72) 0%,
+    rgba(252, 250, 240, 0.42) 20%,
+    rgba(252, 250, 240, 0.14) 36%,
+    rgba(252, 250, 240, 0) 48%
+  );
+}
+.hero-banner-inner {
+  position: relative;
+  z-index: 2;
   display: flex;
-  gap: 24px;
-  align-items: stretch;
+  align-items: center;
+  min-height: 520px;
+  padding-top: 36px;
+  padding-bottom: 36px;
 }
 .hero-text {
-  width: 38%;
-  padding-top: 12px;
+  width: min(440px, 48%);
+  max-width: 100%;
 }
 .hero-text h1 {
   margin: 0 0 10px;
   font-size: 32px;
   line-height: 1.2;
-  color: #6f8738;
+  color: #5e7a32;
   font-weight: 800;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
 }
 .hero-text .sub {
   margin: 0 0 14px;
   font-size: 16px;
-  color: #555;
+  color: #444;
 }
 .paws {
   list-style: none;
@@ -330,7 +359,7 @@ img {
 .paws li {
   position: relative;
   padding: 4px 0 4px 24px;
-  color: #444;
+  color: #3f3f3f;
 }
 .paws li:before {
   content: "";
@@ -347,40 +376,8 @@ img {
   gap: 10px;
   flex-wrap: wrap;
 }
-.hero-photo {
-  flex: 1;
-  position: relative;
-  min-height: 280px;
-}
-.hero-photo img.hero-main {
-  width: 100%;
-  height: 360px;
-  object-fit: cover;
-  object-position: center;
-  border-radius: 10px;
-  box-shadow: 0 4px 16px rgba(80, 70, 40, 0.12);
-}
-.hero-bowl {
-  display: none;
-}
-.stamp {
-  display: none;
-}
-.hero-ship {
-  width: 200px;
-  background: #fffdf6;
-  border: 1px solid #e4dcc4;
-  border-radius: 4px;
-  padding: 14px 12px;
-  box-shadow: 0 2px 10px rgba(80, 70, 40, 0.08);
-  align-self: center;
-  transform: rotate(1.4deg);
-}
-.hero-ship h3 {
-  margin: 0 0 10px;
-  font-size: 14px;
-  color: #3a3a3a;
-  line-height: 1.35;
+.hero-actions .btn-ghost {
+  background: rgba(255, 255, 255, 0.88);
 }
 .carriers {
   display: flex;
@@ -1171,7 +1168,6 @@ img {
 @media (max-width: 900px) {
   .topbar .wrap,
   .header-inner,
-  .hero-grid,
   .features,
   .catalog-layout,
   .footer-grid,
@@ -1185,8 +1181,28 @@ img {
     justify-content: flex-start;
     margin: 12px 0;
   }
+  .hero-banner,
+  .hero-banner-inner {
+    min-height: 560px;
+  }
+  .hero-banner-img {
+    object-position: 72% 15%;
+  }
+  .hero-banner-scrim {
+    background: linear-gradient(
+      180deg,
+      rgba(252, 250, 240, 0.62) 0%,
+      rgba(252, 250, 240, 0.32) 26%,
+      rgba(252, 250, 240, 0.1) 45%,
+      rgba(252, 250, 240, 0) 62%
+    );
+  }
+  .hero-banner-inner {
+    align-items: flex-start;
+    padding-top: 28px;
+    padding-bottom: 24px;
+  }
   .hero-text,
-  .hero-ship,
   .why,
   .card,
   .toy-card,
@@ -1195,12 +1211,8 @@ img {
   .p-visual {
     width: auto;
   }
-  .hero-photo {
-    margin: 16px 0;
-    min-height: 0;
-  }
-  .hero-photo img.hero-main {
-    height: 220px;
+  .hero-text h1 {
+    font-size: 26px;
   }
   .cart-widget {
     margin-top: 8px;
@@ -1228,8 +1240,5 @@ img {
     width: 100%;
     height: 180px;
     margin-bottom: 8px;
-  }
-  .stamp {
-    display: none;
   }
 }
